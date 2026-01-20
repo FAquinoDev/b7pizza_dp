@@ -15,7 +15,47 @@ model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
   name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  password  String
+  orders    Order[]
 }
 
+model product {
+  id          Int      @id @default(autoincrement())
+  name        String
+  image       String
+  description String?
+  price       Float
+ ingredients  String
+ orderProducts OrderProducts[]
+}
+
+model Order {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  obs String?
+  STATUS    OrderStatus @default(INITIALIZED)
+
+  user      User     @relation(fields: [userId], references: [id])
+  orderProducts OrderProducts[]
+}
+
+modelOrderProducts {
+  id        Int      @id @default(autoincrement())
+  orderId   Int
+  productId Int
+  quantity  Int
+
+  order     Order    @relation(fields: [orderId], references: [id])
+  product   product  @relation(fields: [productId], references: [id])
+}
+
+enum OrderStatus {
+  INITIALIZED
+  IN_REVIEW
+  PAID
+  SENT
+  DELIVERED
+  CANCELED
+}
